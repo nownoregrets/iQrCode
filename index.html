@@ -9,7 +9,7 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
 
     <style>
-        #img {
+        #img-box {
             display: none;
         }
     </style>
@@ -22,26 +22,44 @@
         <button class="btn btn-dark" type="button" id="button-addon2" onclick="generateQrCode()">Generate</button>
     </div>
 
-    <div class="card" style="width: 18rem;">
+    <div class="card" style="width: 18rem;" id="img-box">
         <img id="img" src="" class="card-img-top" alt="iQrCode">
         <div class="card-body">
             <p class="card-text" id="img-para"></p>
         </div>
+        <a class="btn btn-primary" onclick="downloadQrCode()">Download</a>
     </div>
+
+    <!-- FileSaver.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </body>
 
 <script>
-    let input = document.getElementById("input")
-    let img = document.getElementById("img")
-    let imgPara = document.getElementById("img-para")
-    let qrCode = ""
-    // https://quickchart.io/qr?text=Hello world
+    let input = document.getElementById("input");
+    let img = document.getElementById("img");
+    let imgPara = document.getElementById("img-para");
+    let qrCode = "";
+
     function generateQrCode() {
-        qrCode = `https://quickchart.io/qr?text=${input.value}&size=300&caption=Scan%20Me&captionFontSize=25`
-        img.src = qrCode
-        img.style.display = "block"
-        imgPara.innerText = `You Generated Qr Code for ${input.value}`
+        if (!input.value.trim()) {
+            alert("Error! Please Enter Text or Link");
+        } else {
+            qrCode = `https://quickchart.io/qr?text=${input.value}&size=300&caption=Scan%20Me&captionFontSize=25`;
+            img.src = qrCode;
+            document.getElementById("img-box").style.display = "block";
+            imgPara.innerText = `You Generated QR Code for ${input.value}`;
+        }
     }
+
+    function downloadQrCode() {
+        fetch(qrCode).then(res => res.blob()).then(blob => {saveAs(blob, "Qr Code.png");})
+    }
+
+    window.addEventListener("keydown", function (e) {
+        if (e.keyCode == "13") {
+            generateQrCode();
+        }
+    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
